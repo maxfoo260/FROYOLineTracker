@@ -1,0 +1,105 @@
+# 🍦 Froyo Line Tracker
+
+Live line tracking for NYC's trendiest froyo spots — MYKA, Mimi's, and more.
+
+Every shop card shows a **time-of-day estimate** by default and flips to a
+**LIVE** status the moment someone standing in line taps in a report. It's a
+crowdsourced tracker: the data is only as good (and as current) as the people
+on the ground, so reports fade out after 45 minutes.
+
+<p align="center">
+  <em>Pink, mobile-first, and refreshes itself every 15 seconds.</em>
+</p>
+
+## Why it works this way
+
+There is **no official public API** that reports real-time wait times or line
+lengths for individual froyo shops. Google Maps' "Live busyness" is not exposed
+in Google's official API, and scraping it is fragile and against their terms.
+
+So this app blends two honest sources:
+
+1. **Time-of-day estimate** — a demand model per shop (quiet mornings, busy
+   weekend evenings), scaled by how trendy the spot is. Always available, but
+   it's an *estimate*.
+2. **Live crowdsourced reports** — anyone can tap the current line level
+   (*No line → Out the door*) plus an optional wait time. Recent reports
+   override the estimate; the card shows a `LIVE` badge and how long ago the
+   last report came in.
+
+The two are blended with **recency weighting**: a single fresh report nudges the
+number, and more/newer reports pull it fully toward the live truth.
+
+## Run it locally
+
+```bash
+npm install
+npm start
+# open http://localhost:3000
+```
+
+That's it — the SQLite database and shop seed data are created automatically on
+first boot.
+
+## Project layout
+
+| File | What it does |
+| --- | --- |
+| `server.js` | Express server + JSON API |
+| `db.js` | SQLite data layer (swap for Postgres later without touching the app) |
+| `lib/status.js` | The busyness model — estimate + live-report blend |
+| `data/shops.json` | Shop list. **Edit this to add/remove spots** |
+| `public/` | Frontend (vanilla HTML/CSS/JS, no build step) |
+
+### Add or edit a shop
+
+Edit `data/shops.json` and restart (or run `npm run seed`). Fields:
+
+```json
+{
+  "id": "myka",                 // unique slug
+  "name": "MYKA",
+  "neighborhood": "Nolita",
+  "borough": "Manhattan",
+  "blurb": "The froyo that broke the internet.",
+  "popularity": 1.5,            // ~0.8 sleepy … 1.5 mob scene (affects the estimate)
+  "emoji": "🍦"
+}
+```
+
+> **Note:** shop names/neighborhoods here are a starter seed — double-check
+> details before treating them as authoritative. Map links are generated from
+> the shop name so they always resolve to a Google Maps search.
+
+## API
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/api/shops` | All shops with current status, shortest line first |
+| `GET` | `/api/shops/:id` | One shop's detail + status |
+| `GET` | `/api/levels` | Line-level definitions (for the report UI) |
+| `POST` | `/api/shops/:id/report` | Submit a live report `{ lineLevel: 0-4, waitMinutes?: number }` |
+| `GET` | `/api/health` | Health check |
+
+There's a light 30-second per-shop, per-IP cooldown on reports to curb spam.
+
+## Deploying
+
+It's a plain Node server, so it runs on any host that runs `npm start`
+(Render, Railway, Fly.io, a VPS…). Set `PORT` and optionally `DB_PATH`.
+
+**Heads up on data durability:** live line reports are inherently short-lived
+(they expire after 45 min), so an ephemeral filesystem is usually fine. If you
+want reports to survive redeploys, point `DB_PATH` at a persistent volume, or
+swap `db.js` for a hosted Postgres.
+
+## Ideas for next
+
+- Map view with pins (needs verified coordinates per shop)
+- Push/subscribe: "ping me when MYKA drops below a 10-minute wait"
+- History sparkline: today's line over time
+- Photo attach on a report
+
+---
+
+MIT. Built for froyo lovers. 🍧

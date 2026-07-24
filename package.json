@@ -1,0 +1,20 @@
+{
+  "name": "froyo-line-tracker",
+  "version": "0.1.0",
+  "description": "Live line tracking for trendy NYC froyo spots (MYKA, Mimi's, and more)",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "express": "^4.21.2"
+  },
+  "license": "MIT"
+}

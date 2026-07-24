@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ff5fa2" />
+    <title>Froyo Line Tracker · NYC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍦</text></svg>"
+    />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="wrap topbar-inner">
+        <h1>🍦 Froyo Line Tracker</h1>
+        <p class="tagline">
+          Live lines at NYC's trendiest froyo spots — updated by people on the ground.
+        </p>
+        <div class="status-row">
+          <span id="live-dot" class="live-dot"></span>
+          <span id="refresh-note">Loading…</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <div id="shops" class="grid" aria-live="polite"></div>
+      <p class="disclaimer">
+        <strong>How this works:</strong> cards show a
+        <em>time-of-day estimate</em> until someone nearby taps in a live report —
+        then they flip to <span class="pill live">LIVE</span>. Reports fade after
+        <span id="ttl">45</span> minutes. Standing in a line right now?
+        Hit <strong>Report the line</strong> and help the next person out.
+      </p>
+    </main>
+
+    <!-- Report modal -->
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <button class="modal-close" id="modal-close" aria-label="Close">×</button>
+        <h2 id="modal-title">Report the line</h2>
+        <p class="modal-sub" id="modal-shop"></p>
+
+        <div class="levels" id="levels"></div>
+
+        <label class="wait-label">
+          Rough wait (optional)
+          <div class="wait-input">
+            <input
+              id="wait"
+              type="number"
+              min="0"
+              max="240"
+              inputmode="numeric"
+              placeholder="e.g. 15"
+            />
+            <span>min</span>
+          </div>
+        </label>
+
+        <button class="submit-btn" id="submit-report">Submit report</button>
+        <p class="modal-error" id="modal-error"></p>
+      </div>
+    </div>
+
+    <footer class="wrap foot">
+      <p>Built for froyo lovers. Data is crowdsourced — be kind, be accurate. 🍧</p>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

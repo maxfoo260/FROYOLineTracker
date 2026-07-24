@@ -1,0 +1,56 @@
+[
+  {
+    "id": "myka",
+    "name": "MYKA",
+    "neighborhood": "Nolita",
+    "borough": "Manhattan",
+    "blurb": "The froyo that broke the internet. Expect a crowd on weekend nights.",
+    "popularity": 1.5,
+    "emoji": "🍦"
+  },
+  {
+    "id": "mimis",
+    "name": "Mimi's",
+    "neighborhood": "West Village",
+    "borough": "Manhattan",
+    "blurb": "Cult-favorite swirls and a line that spills onto the sidewalk.",
+    "popularity": 1.4,
+    "emoji": "🍧"
+  },
+  {
+    "id": "soft-swerve",
+    "name": "Soft Swerve",
+    "neighborhood": "Lower East Side",
+    "borough": "Manhattan",
+    "blurb": "Ube, black sesame, matcha soft serve. A downtown staple.",
+    "popularity": 1.2,
+    "emoji": "🍨"
+  },
+  {
+    "id": "16-handles",
+    "name": "16 Handles",
+    "neighborhood": "East Village",
+    "borough": "Manhattan",
+    "blurb": "Self-serve classic with a rotating wall of flavors.",
+    "popularity": 1.0,
+    "emoji": "🍦"
+  },
+  {
+    "id": "yolo-froyo",
+    "name": "YOLO Froyo",
+    "neighborhood": "Williamsburg",
+    "borough": "Brooklyn",
+    "blurb": "Brooklyn's trendy toppings bar and a rooftop scoop scene.",
+    "popularity": 1.1,
+    "emoji": "🍧"
+  },
+  {
+    "id": "forty-carrots",
+    "name": "Forty Carrots",
+    "neighborhood": "Upper East Side",
+    "borough": "Manhattan",
+    "blurb": "The Bloomingdale's frozen yogurt institution. Uptown legend.",
+    "popularity": 0.9,
+    "emoji": "🥕"
+  }
+]
