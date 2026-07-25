@@ -1,0 +1,14 @@
+# Render.com blueprint — one-click deploy for the Froyo Line Tracker.
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: froyo-line-tracker
+    runtime: node
+    plan: free
+    branch: claude/nyc-froyo-tracking-ofl953
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22.11.0"

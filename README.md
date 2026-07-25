@@ -13,6 +13,34 @@ camera so you can eyeball the block yourself.
   <em>Pink, mobile-first, and refreshes itself every 15 seconds.</em>
 </p>
 
+## 🚀 Put it live (free)
+
+This is a real Node app with a shared database, so **GitHub Pages can't host it**
+(Pages only serves static files — no server, no shared reports, no camera proxy).
+The easiest free home is **Render**, and there's a blueprint (`render.yaml`) so
+it's basically one click:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/maxfoo260/FROYOLineTracker)
+
+1. Click the button (or go to <https://render.com> → **New → Blueprint**).
+2. Sign in with GitHub and pick the `FROYOLineTracker` repo.
+3. Render reads `render.yaml`, builds, and deploys. In ~2 minutes you'll get a
+   live URL like `https://froyo-line-tracker.onrender.com`.
+
+That URL is a **real shared tracker** — everyone sees everyone's reports, and the
+street cams work.
+
+**Free-tier notes (all fine for this app):**
+- The service sleeps after ~15 min idle, so the *first* visit after a nap takes
+  ~50 s to wake. It's snappy after that.
+- The free tier has no persistent disk, so the SQLite file resets on restart.
+  That's a non-issue here — line reports expire after 45 minutes anyway. Want
+  durable history? Add a Render disk (paid) or point `DB_PATH` at a hosted
+  Postgres.
+
+Prefer a different host? It's a plain `npm start` server, so **Railway**,
+**Fly.io**, or any VPS work too — see [Deploying](#deploying) below.
+
 ## Why it works this way
 
 There is **no official public API** that reports real-time wait times or line
