@@ -14,6 +14,8 @@ const $ttl = document.getElementById("ttl");
 let LEVELS = [];
 let selectedShop = null;
 let selectedLevel = null;
+const openCams = new Set(); // shop ids whose street cam is expanded
+const CAM_REFRESH_MS = 4000;
 
 const SWATCH = ["#2fbf71", "#7bc043", "#f4b942", "#f4762a", "#e23e5b"];
 
@@ -38,6 +40,7 @@ async function init() {
   buildLevelButtons();
   await load();
   setInterval(load, REFRESH_MS);
+  setInterval(refreshOpenCams, CAM_REFRESH_MS);
   wireModal();
 }
 
@@ -67,6 +70,11 @@ function render(shops) {
   for (const btn of document.querySelectorAll("[data-report]")) {
     btn.addEventListener("click", () => openModal(btn.dataset.report));
   }
+  for (const btn of document.querySelectorAll("[data-cam-toggle]")) {
+    btn.addEventListener("click", () => toggleCam(btn.dataset.camToggle));
+  }
+  // Re-apply any cams the user had expanded before this refresh.
+  for (const id of openCams) applyCamOpen(id, true);
   window.__shops = shops; // for the modal to look up names
 }
 
@@ -113,6 +121,8 @@ function cardHTML(shop) {
         <span>${escapeHTML(metaRight)}</span>
       </div>
 
+      ${camHTML(shop)}
+
       <div class="card-actions">
         <button class="btn btn-report" data-report="${shop.id}">Report the line</button>
         <a class="btn btn-map" href="${shop.mapsUrl}" target="_blank" rel="noopener">Map ↗</a>
@@ -122,6 +132,68 @@ function cardHTML(shop) {
 
 function bandIndex(band) {
   return ["clear", "short", "moderate", "long", "packed"].indexOf(band);
+}
+
+/* ---------- Street cam ---------- */
+
+function camHTML(shop) {
+  const cam = shop.camera;
+  if (!cam) return "";
+  return `
+    <div class="cam" data-cam-shop="${shop.id}">
+      <button class="cam-toggle" data-cam-toggle="${shop.id}" aria-expanded="false">
+        <span>👀 Peek the street cam</span>
+        <span class="cam-caret">▾</span>
+      </button>
+      <div class="cam-panel" hidden>
+        <div class="cam-frame">
+          <span class="cam-live">● LIVE</span>
+          <img
+            data-cam-img="${shop.id}"
+            data-cam-url="${cam.imageUrl}"
+            alt="Live street view near ${escapeHTML(shop.name)}"
+          />
+        </div>
+        <p class="cam-caption">
+          📷 ${escapeHTML(cam.name)} · ${cam.distanceMi} mi away · NYC DOT traffic cam
+        </p>
+      </div>
+    </div>`;
+}
+
+function toggleCam(shopId) {
+  if (openCams.has(shopId)) {
+    openCams.delete(shopId);
+    applyCamOpen(shopId, false);
+  } else {
+    openCams.add(shopId);
+    applyCamOpen(shopId, true);
+  }
+}
+
+// Show/hide a shop's cam panel and (when shown) load a fresh frame.
+function applyCamOpen(shopId, open) {
+  const root = document.querySelector(`.cam[data-cam-shop="${shopId}"]`);
+  if (!root) return;
+  const panel = root.querySelector(".cam-panel");
+  const toggle = root.querySelector(".cam-toggle");
+  const img = root.querySelector("[data-cam-img]");
+  panel.hidden = !open;
+  toggle.setAttribute("aria-expanded", String(open));
+  toggle.classList.toggle("open", open);
+  if (open && img && !img.src) bustCamImage(img);
+}
+
+function bustCamImage(img) {
+  const base = img.dataset.camUrl;
+  if (base) img.src = `${base}?t=${Date.now()}`;
+}
+
+function refreshOpenCams() {
+  for (const id of openCams) {
+    const img = document.querySelector(`[data-cam-img="${id}"]`);
+    if (img) bustCamImage(img);
+  }
 }
 
 /* ---------- Modal ---------- */

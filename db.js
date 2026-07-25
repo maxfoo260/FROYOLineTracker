@@ -19,7 +19,9 @@ db.exec(`
     borough      TEXT,
     blurb        TEXT,
     popularity   REAL DEFAULT 1.0,
-    emoji        TEXT DEFAULT '🍦'
+    emoji        TEXT DEFAULT '🍦',
+    lat          REAL,
+    lng          REAL
   );
 
   CREATE TABLE IF NOT EXISTS reports (
@@ -34,21 +36,45 @@ db.exec(`
     ON reports (shop_id, created_at DESC);
 `);
 
+// Migrate older databases that predate the lat/lng columns (ignore if present).
+for (const col of ["lat REAL", "lng REAL"]) {
+  try {
+    db.exec(`ALTER TABLE shops ADD COLUMN ${col}`);
+  } catch {
+    /* column already exists */
+  }
+}
+
 // Load / refresh shop metadata from data/shops.json (idempotent upsert).
 export function seedShops() {
   const shops = JSON.parse(readFileSync(join(__dirname, "data", "shops.json"), "utf8"));
   const upsert = db.prepare(`
-    INSERT INTO shops (id, name, neighborhood, borough, blurb, popularity, emoji)
-    VALUES (@id, @name, @neighborhood, @borough, @blurb, @popularity, @emoji)
+    INSERT INTO shops (id, name, neighborhood, borough, blurb, popularity, emoji, lat, lng)
+    VALUES (@id, @name, @neighborhood, @borough, @blurb, @popularity, @emoji, @lat, @lng)
     ON CONFLICT(id) DO UPDATE SET
       name = excluded.name,
       neighborhood = excluded.neighborhood,
       borough = excluded.borough,
       blurb = excluded.blurb,
       popularity = excluded.popularity,
-      emoji = excluded.emoji
+      emoji = excluded.emoji,
+      lat = excluded.lat,
+      lng = excluded.lng
   `);
-  const tx = db.transaction((rows) => rows.forEach((r) => upsert.run(r)));
+  const tx = db.transaction((rows) =>
+    rows.forEach((r) =>
+      upsert.run({
+        popularity: 1.0,
+        emoji: "🍦",
+        neighborhood: null,
+        borough: null,
+        blurb: null,
+        lat: null,
+        lng: null,
+        ...r,
+      })
+    )
+  );
   tx(shops);
   return shops.length;
 }

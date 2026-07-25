@@ -5,7 +5,9 @@ Live line tracking for NYC's trendiest froyo spots — MYKA, Mimi's, and more.
 Every shop card shows a **time-of-day estimate** by default and flips to a
 **LIVE** status the moment someone standing in line taps in a report. It's a
 crowdsourced tracker: the data is only as good (and as current) as the people
-on the ground, so reports fade out after 45 minutes.
+on the ground, so reports fade out after 45 minutes. Each card also has a
+**👀 Peek the street cam** button that pulls the nearest live NYC DOT traffic
+camera so you can eyeball the block yourself.
 
 <p align="center">
   <em>Pink, mobile-first, and refreshes itself every 15 seconds.</em>
@@ -30,6 +32,19 @@ So this app blends two honest sources:
 The two are blended with **recency weighting**: a single fresh report nudges the
 number, and more/newer reports pull it fully toward the live truth.
 
+### Street cams (NYC DOT)
+
+On top of that, each shop is mapped to its **nearest online NYC DOT traffic
+camera** (the same public feed the *Traffic Cam Photobooth* project uses — ~970
+cameras citywide). Tap **Peek the street cam** and the card shows a live frame,
+refreshed every few seconds.
+
+Honest caveat: these cameras sit at intersections and are low-res, so they show
+the general block, not a headcount at the shop's door — but you can often spot a
+crowd. The server proxies and briefly caches each image (`/api/cameras/:id/image`)
+so many viewers refreshing at once share a single upstream fetch, and a flaky
+feed never breaks the app.
+
 ## Run it locally
 
 ```bash
@@ -48,6 +63,7 @@ first boot.
 | `server.js` | Express server + JSON API |
 | `db.js` | SQLite data layer (swap for Postgres later without touching the app) |
 | `lib/status.js` | The busyness model — estimate + live-report blend |
+| `lib/cameras.js` | NYC DOT camera directory + nearest-cam matching + image proxy |
 | `data/shops.json` | Shop list. **Edit this to add/remove spots** |
 | `public/` | Frontend (vanilla HTML/CSS/JS, no build step) |
 
@@ -63,7 +79,9 @@ Edit `data/shops.json` and restart (or run `npm run seed`). Fields:
   "borough": "Manhattan",
   "blurb": "The froyo that broke the internet.",
   "popularity": 1.5,            // ~0.8 sleepy … 1.5 mob scene (affects the estimate)
-  "emoji": "🍦"
+  "emoji": "🍦",
+  "lat": 40.7222,               // used to pick the nearest street cam
+  "lng": -73.9955
 }
 ```
 
@@ -79,6 +97,7 @@ Edit `data/shops.json` and restart (or run `npm run seed`). Fields:
 | `GET` | `/api/shops/:id` | One shop's detail + status |
 | `GET` | `/api/levels` | Line-level definitions (for the report UI) |
 | `POST` | `/api/shops/:id/report` | Submit a live report `{ lineLevel: 0-4, waitMinutes?: number }` |
+| `GET` | `/api/cameras/:id/image` | Cached proxy for a NYC DOT camera's current frame |
 | `GET` | `/api/health` | Health check |
 
 There's a light 30-second per-shop, per-IP cooldown on reports to curb spam.

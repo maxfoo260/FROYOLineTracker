@@ -10,6 +10,7 @@ import {
   addReport,
 } from "./db.js";
 import { computeStatus, REPORT_TTL_MINUTES, LINE_LEVELS } from "./lib/status.js";
+import { initCameras, nearestCamera, getCameraImage } from "./lib/cameras.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -37,6 +38,7 @@ function shopWithStatus(shop) {
     blurb: shop.blurb,
     emoji: shop.emoji,
     mapsUrl: `https://www.google.com/maps/search/?api=1&query=${query}`,
+    camera: nearestCamera(shop.lat, shop.lng),
     status,
   };
 }
@@ -94,7 +96,25 @@ app.post("/api/shops/:id/report", (req, res) => {
   res.json(shopWithStatus(shop));
 });
 
+// Live image proxy for a nearby NYC DOT street camera. Cached server-side so
+// many viewers refreshing every few seconds share one upstream fetch.
+app.get("/api/cameras/:id/image", async (req, res) => {
+  try {
+    const { buf, contentType } = await getCameraImage(req.params.id);
+    res.set("Content-Type", contentType);
+    res.set("Cache-Control", "public, max-age=3");
+    res.send(buf);
+  } catch {
+    res.status(502).json({ error: "Camera image unavailable" });
+  }
+});
+
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
+// Warm the camera directory before accepting traffic (best-effort).
+await initCameras().catch((err) =>
+  console.warn("Camera init failed, continuing without cams:", err.message)
+);
 
 app.listen(PORT, () => {
   console.log(`🍦 Froyo Line Tracker running at http://localhost:${PORT}`);

@@ -6,7 +6,9 @@
     "borough": "Manhattan",
     "blurb": "The froyo that broke the internet. Expect a crowd on weekend nights.",
     "popularity": 1.5,
-    "emoji": "🍦"
+    "emoji": "🍦",
+    "lat": 40.7222,
+    "lng": -73.9955
   },
   {
     "id": "mimis",
@@ -15,7 +17,20 @@
     "borough": "Manhattan",
     "blurb": "Cult-favorite swirls and a line that spills onto the sidewalk.",
     "popularity": 1.4,
-    "emoji": "🍧"
+    "emoji": "🍧",
+    "lat": 40.7340,
+    "lng": -74.0035
+  },
+  {
+    "id": "bardies",
+    "name": "Bardie's",
+    "neighborhood": "West Village",
+    "borough": "Manhattan",
+    "blurb": "West Village's buzzy soft-serve darling — go before the after-dinner rush.",
+    "popularity": 1.35,
+    "emoji": "🍨",
+    "lat": 40.7355,
+    "lng": -74.0030
   },
   {
     "id": "soft-swerve",
@@ -24,7 +39,9 @@
     "borough": "Manhattan",
     "blurb": "Ube, black sesame, matcha soft serve. A downtown staple.",
     "popularity": 1.2,
-    "emoji": "🍨"
+    "emoji": "🍦",
+    "lat": 40.7185,
+    "lng": -73.9905
   },
   {
     "id": "16-handles",
@@ -33,7 +50,9 @@
     "borough": "Manhattan",
     "blurb": "Self-serve classic with a rotating wall of flavors.",
     "popularity": 1.0,
-    "emoji": "🍦"
+    "emoji": "🍦",
+    "lat": 40.7290,
+    "lng": -73.9860
   },
   {
     "id": "yolo-froyo",
@@ -42,7 +61,9 @@
     "borough": "Brooklyn",
     "blurb": "Brooklyn's trendy toppings bar and a rooftop scoop scene.",
     "popularity": 1.1,
-    "emoji": "🍧"
+    "emoji": "🍧",
+    "lat": 40.7143,
+    "lng": -73.9540
   },
   {
     "id": "forty-carrots",
@@ -51,6 +72,8 @@
     "borough": "Manhattan",
     "blurb": "The Bloomingdale's frozen yogurt institution. Uptown legend.",
     "popularity": 0.9,
-    "emoji": "🥕"
+    "emoji": "🥕",
+    "lat": 40.7623,
+    "lng": -73.9675
   }
 ]

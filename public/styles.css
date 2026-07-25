@@ -211,6 +211,82 @@ body {
   justify-content: center;
 }
 
+/* Street cam */
+.cam-toggle {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #fdf5fa;
+  border-radius: 12px;
+  padding: 9px 12px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--pink-deep);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cam-toggle:hover {
+  background: #fbeaf3;
+}
+.cam-caret {
+  transition: transform 0.15s ease;
+  font-size: 0.7rem;
+}
+.cam-toggle.open .cam-caret {
+  transform: rotate(180deg);
+}
+.cam-panel {
+  margin-top: 8px;
+}
+.cam-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #efe6ec;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.cam-frame::after {
+  content: "loading cam…";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.cam-frame img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cam-live {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  background: rgba(226, 62, 91, 0.92);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 7px;
+  border-radius: 999px;
+}
+.cam-caption {
+  margin: 6px 2px 0;
+  font-size: 0.74rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .disclaimer {
   background: #fff;
   border: 1px dashed var(--line);
